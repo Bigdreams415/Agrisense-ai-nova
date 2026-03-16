@@ -1,0 +1,75 @@
+# Backend-specific .gitignore
+# This file complements the root .gitignore
+
+# Python virtual environment
+venv/
+.venv/
+env/
+ENV/
+
+# Environment variables (contains AWS keys, API keys, etc.)
+.env
+.env.local
+.env.production
+.env.staging
+
+# Model files (large binary files)
+models/
+*.keras
+*.pkl
+*.h5
+*.pb
+*.onnx
+*.joblib
+
+# Data files
+data/
+*.json
+*.csv
+
+# Logs
+*.log
+predictions.log
+logs/
+
+# Satellite data
+nasa_data/
+satellite_data/
+
+# Cache and temporary files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.cache/
+.pytest_cache/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test coverage
+.coverage
+htmlcov/
+coverage.xml
+
+# AWS credentials
+.aws/
+
+# Azure storage
+__blobstorage__
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Backup files
+*.bak
+*.backup
