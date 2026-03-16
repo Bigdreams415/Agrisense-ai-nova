@@ -44,7 +44,7 @@ const NovaChat: React.FC<NovaChatProps> = ({ context, fullContext }) => {
       setMessages([]);
       setIsExpanded(true);
     }
-  }, [context?.prediction_id]);
+}, [context?.prediction_id, context]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
