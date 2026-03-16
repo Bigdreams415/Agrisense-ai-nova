@@ -23,8 +23,6 @@ models/
 *.joblib
 
 # Data files
-data/
-*.json
 *.csv
 
 # Logs
