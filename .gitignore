@@ -229,15 +229,7 @@ Thumbs.db
 *.tmp
 *.temp
 
-# Model files and data (large files)
-models/
-*.keras
-*.pkl
-*.h5
-*.pb
-*.onnx
-
-# Satellite data
+# Satellite data (downloaded/generated data, not core app data)
 nasa_data/
 satellite_data/
 
@@ -275,3 +267,4 @@ coverage/
 *.bak
 *.backup
 *~
+models/

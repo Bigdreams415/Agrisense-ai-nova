@@ -13,24 +13,12 @@ ENV/
 .env.production
 .env.staging
 
-# Model files (large binary files)
-models/
-*.keras
-*.pkl
-*.h5
-*.pb
-*.onnx
-*.joblib
-
-# Data files
-*.csv
-
 # Logs
 *.log
 predictions.log
 logs/
 
-# Satellite data
+# Satellite data (downloaded/generated data, not core app data)
 nasa_data/
 satellite_data/
 
@@ -71,3 +59,4 @@ __blobstorage__
 # Backup files
 *.bak
 *.backup
+models/
