@@ -1,0 +1,66 @@
+name: Deploy AgriSense AI Backend
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'backend/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create .env file on server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            mkdir -p /home/ubuntu/agrisense
+            cat > /home/ubuntu/agrisense/.env << 'ENVEOF'
+            ${{ secrets.ENV_FILE }}
+            ENVEOF
+
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd /home/ubuntu/agrisense
+
+            # Pull latest code
+            if [ -d "repo" ]; then
+              cd repo && git pull origin main && cd ..
+            else
+              git clone https://github.com/Bigdreams415/Agrisense-ai-nova.git repo
+            fi
+
+            # Copy .env into backend
+            cp .env repo/backend/.env
+
+            # Build Docker image
+            cd repo/backend
+            docker build -t agrisense-backend .
+
+            # Stop old container if running
+            docker stop agrisense-api || true
+            docker rm agrisense-api || true
+
+            # Run new container
+            docker run -d \
+              --name agrisense-api \
+              --restart always \
+              -p 8080:8080 \
+              --env-file .env \
+              agrisense-backend
+
+            echo "Deployment complete!"
+            docker ps
