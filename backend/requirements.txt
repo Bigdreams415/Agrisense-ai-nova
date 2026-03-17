@@ -58,8 +58,8 @@ pqdm==0.2.0
 propcache==0.4.1
 protobuf==7.34.0
 pycparser==3.0
-pydantic==2.9.2
-pydantic_core==2.23.4
+pydantic>=2.9.2
+pydantic_core>=2.23.4
 Pygments==2.19.2
 pyparsing==3.3.2
 python-cmr==0.13.0
