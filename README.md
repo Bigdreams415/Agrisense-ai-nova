@@ -10,43 +10,34 @@
 
 ## 🏗️ Architecture
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                        FRONTEND (React)                         │
-│          Vercel · TypeScript · Tailwind · Framer Motion         │
-└────────────────────────┬────────────────────────────────────────┘
-                         │ HTTP / WebSocket
-┌────────────────────────▼────────────────────────────────────────┐
-│                     BACKEND (FastAPI)                           │
-│                  AWS EC2 t3.medium · Docker                     │
-│                                                                 │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────────────┐  │
-│  │   /predict   │  │  /irrigation │  │    /yield/predict    │  │
-│  │  CNN Model   │  │  RF Model    │  │      RF Model        │  │
-│  │ 98.7% acc.   │  │  ON/OFF rec  │  │   hg/ha forecast     │  │
-│  └──────┬───────┘  └──────┬───────┘  └──────────┬───────────┘  │
-│         │                 │                      │              │
-│  ┌──────▼─────────────────▼──────────────────────▼───────────┐  │
-│  │              Amazon Nova (AWS Bedrock)                    │  │
-│  │         us.amazon.nova-lite-v1:0 · Converse API          │  │
-│  │   Disease advice · Irrigation tips · Yield insights      │  │
-│  │   Satellite farm advice · Agentic follow-up chat         │  │
-│  └───────────────────────────────────────────────────────────┘  │
-│                                                                 │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────────────┐  │
-│  │  /analyze/   │  │    /chat     │  │    /api/drones/      │  │
-│  │  vegetation  │  │  Agentic AI  │  │   WebSocket stream   │  │
-│  │  NASA HLS    │  │  Multi-turn  │  │   Frame analysis     │  │
-│  └──────┬───────┘  └──────────────┘  └──────────────────────┘  │
-│         │                                                       │
-└─────────┼───────────────────────────────────────────────────────┘
-          │
-┌─────────▼───────────────────────────────────────────────────────┐
-│                    NASA Earthdata                               │
-│         HLS Sentinel-2 · NDVI · NDWI · GeoTIFF bands           │
-└─────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TB
+        FE["Frontend\nReact · TypeScript · Tailwind · Framer Motion\nHosted on Vercel"]
 
-Models stored on Azure Blob Storage → downloaded on first startup
+        subgraph BE["Backend · FastAPI (AWS EC2 t3.medium · Docker)"]
+            PRED["POST /predict\nCNN model\n98.7% accuracy"]
+            IRR["POST /irrigation/predict\nRandom Forest\nON/OFF recommendation"]
+            YIELD["POST /yield/predict\nRandom Forest/XGBoost\nhg/ha forecast"]
+            SAT["POST /analyze/vegetation\nNASA HLS processing\nNDVI + NDWI"]
+            CHAT["POST /chat\nAgentic AI\nMulti-turn conversation"]
+            DRONE["/api/drones + /api/jobs + WS /ws/jobs/{job_id}\nDrone stream + frame analysis"]
+        end
+
+        NOVA["Amazon Nova (AWS Bedrock)\nus.amazon.nova-lite-v1:0 · Converse API\nDisease advice · Irrigation tips · Yield insights\nSatellite advice · Agentic follow-up chat"]
+        NASA["NASA Earthdata\nHLS Sentinel-2 · GeoTIFF bands"]
+        AZ["Azure Blob Storage\nModel files downloaded on startup"]
+
+        FE -->|"HTTP / WebSocket"| BE
+
+        PRED --> NOVA
+        IRR --> NOVA
+        YIELD --> NOVA
+        SAT --> NOVA
+        CHAT --> NOVA
+        DRONE --> NOVA
+
+        SAT --> NASA
+        BE --> AZ
 ```
 
 ---
